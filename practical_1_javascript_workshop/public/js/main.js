@@ -86,6 +86,9 @@ function p(elementType, props = {}, childrens = null) {
           ? element[key] = props[key]
           : Object.keys(props[key]).forEach(style => element.style[style] = props.style[style])
         break
+      case 'classList':
+        props.classList.forEach(cssClass => {element.classList.add(cssClass); console.log(cssClass);})
+        break
       default:
         element[key] = props[key]
       }
@@ -313,27 +316,74 @@ function renderNotFound(router) {
   return renderView(view)
 }
 
+// function renderHeader() {
+//   return p('header', {id: 'header'}, [
+//     p('div', {className: 'title'},
+//       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/')}}, 'Death poets\' community')
+//     ),
+//     p('div', {className: 'links'}, [
+//       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/books')}}, 'Books'),
+//       ' ',
+//       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/authors')}}, 'Authors')
+//     ])
+//   ])
+// }
+
 function renderHeader() {
   return p('header', {id: 'header'}, [
-    p('div', {className: 'title'},
-      p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/')}}, 'Death poets\' community')
-    ),
-    p('div', {className: 'links'}, [
-      p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/books')}}, 'Books'),
-      ' ',
-      p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/authors')}}, 'Authors')
+    p('nav', {classList: ['navbar', 'navbar-default']}, [
+      p('div', {classList: ['container']}, [
+        p('a',
+          {
+            classList: ['navbar-brand'],
+            href: '#',
+            onclick(evt) {evt.preventDefault(); router.navigate('/')}
+           },
+          'Poets community'),
+        p('ul', {classList: ['nav', 'navbar-nav', 'navbar-right']}, [
+          p('li', null, [
+            p('a',
+              {
+                classList: [],
+                href: '#',
+                onclick(evt) {evt.preventDefault(); router.navigate('/books')}
+              }, 'Books')
+          ]),
+          p('li', null, [
+            p('a',
+              {
+                classList: [],
+                href: '#',
+                onclick(evt) {evt.preventDefault(); router.navigate('/authors')}
+              }, 'Authors')
+          ])
+        ])
+      ])
     ])
   ])
 }
 
 function renderRoot(router) {
   const view =
-    p('div', {id: 'header'}, [
-      p('div', {textContent: 'Привіт, TernopilJS!'}),
-      p('div', {textContent: ' Базовий приклад SPA без використання сторонніх бібліотек.'}),
-      p('a', {href: '#', textContent: 'Перейти на привітання', onclick(evt) {evt.preventDefault(); router.navigate('/hello')}}),
-      p('a', {href: '#', textContent: 'Перейти назад', onclick(evt) {evt.preventDefault(); router.navigateBack()}})
-    ])
+    p('div', {classList: ['container']}, [
+      p('div', {classList: ['page-header']}, [
+        p('h1', {textContent: 'Привіт, TernopilJS!'})
+      ]),
+      p('p', {textContent: ' Базовий приклад SPA без використання сторонніх бібліотек.'}),
+      p('a',
+        {
+          classList: ['btn', 'btn-default'],
+          href: '#',
+          textContent: 'Перейти на привітання',
+          onclick(evt) {evt.preventDefault(); router.navigate('/hello')}
+        }),
+      p('a',
+        {
+          classList: ['btn', 'btn-default', 'ml-10'],
+          href: '#',
+          textContent: 'Перейти назад',
+          onclick(evt) {evt.preventDefault(); router.navigateBack()}})
+  ])
 
   return renderView(view)
 }
