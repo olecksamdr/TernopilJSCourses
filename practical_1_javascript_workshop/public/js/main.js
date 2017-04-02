@@ -136,12 +136,32 @@ class Collection {
 
   insert(data) {
     if (this._validateData(data)) {
+      this._applyDefaultTo(data)
       this._data[data.id] = data
 
       this._commit()
     } else {
       throw new Error({message: 'Bad data', data: data})
     }
+  }
+
+  // додає до поля дефолтне значення якщо воно вказано в моделі
+  _applyDefaultTo(data) {
+    let fieldKeys = Object.keys(data)
+
+    fieldKeys.forEach(fieldKey => {
+      // пропускаємо приватні поля
+      if (fieldKey[0] === '_')
+        return
+
+      let defaultTo = this._fields[fieldKey].defaultTo
+
+      if (!data[fieldKey] &&  defaultTo !== undefined) {
+        data[fieldKey] = defaultTo
+      }
+    })
+
+    return data
   }
 
   find(value, key = 'id') {

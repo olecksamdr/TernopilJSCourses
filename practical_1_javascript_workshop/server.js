@@ -22,11 +22,11 @@ app.get('*', (req, res, next) => {
 app.use('/public', express.static(__dirname + '/public'));
 
 
-app.listen(3000, '0.0.0.0', (err) => {
+app.listen(3000, 'localhost', (err) => {
   if (err) {
     console.log(err)
     return
   }
 
-  console.log('Listening at http://0.0.0.0:3000')
+  console.log('Listening at localhost:3000')
 })
