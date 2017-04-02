@@ -87,7 +87,7 @@ function p(elementType, props = {}, childrens = null) {
           : Object.keys(props[key]).forEach(style => element.style[style] = props.style[style])
         break
       case 'classList':
-        props.classList.forEach(cssClass => {element.classList.add(cssClass); console.log(cssClass);})
+        props.classList.forEach(cssClass => element.classList.add(cssClass))
         break
       default:
         element[key] = props[key]
@@ -290,12 +290,14 @@ function renderView(view) {
 
 function renderBooksIndex(data) {
   const renderBook = book =>
-    p('div', {className: 'book'}, [
-      p('img', {src: book.image}),
+  p('div', {classList: ['panel', 'panel-default']}, [
+    p('div', {classList: ['panel-body', 'book']}, [
+      p('img', {src: book.image, className: 'book-img'}),
       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/books/' + book.id)}}, book.title)
     ])
+  ])
 
-  return p('div', {className: 'books'}, data.map(renderBook))
+  return p('div', {classList: ['container', 'books']}, data.map(renderBook))
 }
 
 function renderBooksShow(book) {
@@ -307,10 +309,24 @@ function renderBooksShow(book) {
 
 function renderNotFound(router) {
   const view =
-    p('div', {id: 'hello'}, [
-      p('div', {textContent: '404! Not Found!'}),
-      p('a', {href: '#', textContent: 'Перейти на головну', onclick(evt) {evt.preventDefault(); router.navigate('/')}}),
-      p('a', {href: '#', textContent: 'Перейти назад', onclick(evt) {evt.preventDefault(); router.navigateBack()}})
+    p('div', {id: 'hello', className: 'container'}, [
+      p('div', {className: 'page-header'}, [
+        p('h1', null, '404! Not Found!')
+      ]),
+      p('a',
+        {
+          href: '#',
+          classList: ['btn', 'btn-default'],
+          textContent: 'Перейти на головну',
+          onclick(evt) {evt.preventDefault();router.navigate('/')}
+        }),
+      p('a',
+        {
+          href: '#',
+          classList: ['btn', 'btn-default', 'ml-10'],
+          textContent: 'Перейти назад',
+          onclick(evt) {evt.preventDefault(); router.navigateBack()}
+        })
     ])
 
   return renderView(view)
