@@ -145,6 +145,41 @@ class Collection {
     }
   }
 
+  update(elementId, dataObj) {
+    let element = this._data[elementId]
+
+    if (!element)
+      throw new Error(`element with id ${elementId} is not defined`)
+
+    if (this._validateData(dataObj)) {
+      Object.assign(element, dataObj)
+
+      this._commit()
+    } else {
+      throw new Error({message: 'Bad data', data: data})
+    }
+  }
+
+  remove(value, key = 'id') {
+    let
+      toRemove = [],
+      elements = this.findAll()
+
+    elements.forEach(element => {
+      if (element[key] === value)
+        toRemove.push(parseInt(element.id))
+    })
+
+    let delBools = toRemove.map(id => delete this._data[id])
+
+    this._commit();
+
+    if (delBools.every(bool => bool === true))
+      return true
+    else
+      return false
+  }
+
   // додає до поля дефолтне значення якщо воно вказано в моделі
   _applyDefaultTo(data) {
     let fieldKeys = Object.keys(data)
