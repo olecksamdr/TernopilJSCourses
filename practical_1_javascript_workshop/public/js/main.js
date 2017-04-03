@@ -355,8 +355,8 @@ class AuthorsController {
     renderView(view)
   }
 
-  showAuthorBooks(location) {
-    console.log(location);
+  showAuthorBooks(router, location) {
+
   }
 }
 
@@ -393,7 +393,14 @@ function renderAuthorsIndex(authors) {
 
   const renderAuthor = author => {
     return p('div', {className: 'user'}, [
-              p('img', {src: author.avatarUrl, classList: ['img-circle', 'avatar']}),
+              p('a',
+              {
+                href: '#',
+                onclick(evt) {evt.preventDefault(); router.navigate(`/authors/${author.id}`)}
+              },
+              [
+                p('img', {src: author.avatarUrl, classList: ['img-circle', 'avatar']})
+              ]),
               p('ul', {className: 'list-group'}, createListFromFields(author))
       ])
   }
@@ -532,9 +539,9 @@ class App {
 router
   .add('/', renderRoot)
   .add('/books', booksController.index)
-  .add(/(\/books\/)(\d+)/, booksController.show)
+  .add(/(\/books\/)(\d+)$/, booksController.show)
   .add('/authors', authorsController.index)
-  .add(/(\/authors\/)(\d+)/, authorsController.show)
+  .add(/(\/authors\/)(\d+)$/, authorsController.show)
   // .add('/authors')
   .add('*', renderNotFound)
 
