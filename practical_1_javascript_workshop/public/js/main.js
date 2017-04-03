@@ -263,9 +263,9 @@ class Collection {
 model.defineModel({
   name: 'author',
   fields: {
-    id: {type: 'string'},
+    id: {type: 'string', hidden: true},
     fullName: {type: 'string', defaultTo: '', presence: true},
-    avatarUrl: {type: 'string', defaultTo: 'http://placehold.it/100x300'},
+    avatarUrl: {type: 'string', defaultTo: '/public/img/user.svg', hidden: true},
     dateOfDeath: {type: 'string', defaultTo: ''},
     city: {type: 'string', defaultTo: ''},
     books: {ref: 'book'}
@@ -286,11 +286,20 @@ model.defineModel({
 
 model.author.insert({
   id: '1',
-  fullName: 'Death Man',
+  fullName: 'First Author',
   avatarUrl: '',
   dateOfDeath: '',
   city: '',
   books: ['1']
+})
+
+model.author.insert({
+  id: '2',
+  fullName: 'Second Author',
+  avatarUrl: '',
+  dateOfDeath: '',
+  city: '',
+  books: ['2']
 })
 
 model.book.insert({
@@ -331,6 +340,54 @@ class BooksController {
 }
 
 const booksController = new BooksController()
+
+class AthorsController {
+  index(location) {
+    const authors = model.author.findAll()
+    const view = renderAuthorsIndex(authors)
+    renderView(view)
+  }
+}
+
+let authorsController = new AthorsController()
+
+function renderAuthorsIndex(authors) {
+  let createListFromFields = (author) => {
+    let
+      keys = Object.keys(author),
+      list = []
+
+    keys.forEach(key => {
+      if (
+          (typeof key === 'string' && key[0] === '_')
+          || !author[key]
+          || model.author._fields[key].hidden
+        )
+        return
+
+      if (model.author._fields[key].ref)
+        list.push(p('a', {
+            href: '#',
+            onclick(evt) {evt.preventDefault(); router.navigate(`/authors/${author.id}/books`)}
+          }, [
+            p('li', {className: 'list-group-item'}, `${key}`)
+          ]))
+      else
+        list.push(p('li', {className: 'list-group-item'}, `${key}: ${author[key]}`))
+    })
+
+    return list
+  }
+
+  const renderAuthor = author => {
+    return p('div', {className: 'user'}, [
+              p('img', {src: author.avatarUrl, classList: ['img-circle', 'avatar']}),
+              p('ul', {className: 'list-group'}, createListFromFields(author))
+      ])
+  }
+
+  return p('div', {classList: ['container', 'authors']}, authors.map(renderAuthor))
+}
 
 function renderView(view) {
   const root = document.getElementById('app')
@@ -386,19 +443,6 @@ function renderNotFound(router) {
 
   return renderView(view)
 }
-
-// function renderHeader() {
-//   return p('header', {id: 'header'}, [
-//     p('div', {className: 'title'},
-//       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/')}}, 'Death poets\' community')
-//     ),
-//     p('div', {className: 'links'}, [
-//       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/books')}}, 'Books'),
-//       ' ',
-//       p('a', {href: '#', onclick(evt) {evt.preventDefault(); router.navigate('/authors')}}, 'Authors')
-//     ])
-//   ])
-// }
 
 function renderHeader() {
   return p('header', {id: 'header'}, [
@@ -477,7 +521,7 @@ router
   .add('/', renderRoot)
   .add('/books', booksController.index)
   .add(/(\/books\/)(\d+)/, booksController.show)
-  // .add('/authors', authorsController.index)
+  .add('/authors', authorsController.index)
   // .add('/(\/authors\/)(\d+)/', authorsController.show)
   .add('*', renderNotFound)
 
