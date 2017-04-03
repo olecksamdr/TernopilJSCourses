@@ -341,15 +341,27 @@ class BooksController {
 
 const booksController = new BooksController()
 
-class AthorsController {
+class AuthorsController {
   index(location) {
     const authors = model.author.findAll()
     const view = renderAuthorsIndex(authors)
     renderView(view)
   }
+
+  show(_, location) {
+    const id = location.pathname.split('/')[2]
+    const author = model.author.find(id)
+    const view = renderAuthorsIndex([author])
+    renderView(view)
+  }
+
+  showAuthorBooks(location) {
+    console.log(location);
+  }
 }
 
-let authorsController = new AthorsController()
+let authorsController = new AuthorsController()
+// authorsController.showBooks()
 
 function renderAuthorsIndex(authors) {
   let createListFromFields = (author) => {
@@ -522,7 +534,8 @@ router
   .add('/books', booksController.index)
   .add(/(\/books\/)(\d+)/, booksController.show)
   .add('/authors', authorsController.index)
-  // .add('/(\/authors\/)(\d+)/', authorsController.show)
+  .add(/(\/authors\/)(\d+)/, authorsController.show)
+  // .add('/authors')
   .add('*', renderNotFound)
 
 const app = new App()
