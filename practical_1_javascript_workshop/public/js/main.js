@@ -233,7 +233,7 @@ class Collection {
 
       if (field.ref) {
         const refKey = '_' + field.ref
-        data[refKey] = () => data[key].map(id => this._models[field.ref].find('id', id))
+        data[refKey] = () => data[key].map(id => this._rootModel[field.ref].find(id))
         return true
       }
 
@@ -356,7 +356,11 @@ class AuthorsController {
   }
 
   showAuthorBooks(router, location) {
+    const authorId = location.pathname.match(/^\/authors\/(\d+)\/books$/)[1]
+    const author = model.author.find(authorId)
 
+    console.log(author)
+    console.log(author._book())
   }
 }
 
@@ -539,9 +543,10 @@ class App {
 router
   .add('/', renderRoot)
   .add('/books', booksController.index)
-  .add(/(\/books\/)(\d+)$/, booksController.show)
+  .add(/^(\/books\/)(\d+)\/?$/, booksController.show)
   .add('/authors', authorsController.index)
-  .add(/(\/authors\/)(\d+)$/, authorsController.show)
+  .add(/^(\/authors\/)(\d+)\/?$/, authorsController.show)
+  .add(/^\/authors\/(\d+)\/books\/?$/, authorsController.showAuthorBooks)
   // .add('/authors')
   .add('*', renderNotFound)
 
